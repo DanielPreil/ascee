@@ -1,0 +1,30 @@
+{
+  "name": "ascee",
+  "version": "1.0.0",
+  "description": "Ascee: The 3D Model to Ascii Art Visualizer By Using Three.js.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielPreil/ascee.git"
+  },
+  "keywords": [
+    "\"ascii\"",
+    "\"3d\"",
+    "\"three.js\"",
+    "\"visualize\"",
+    "\"graphics\""
+  ],
+  "author": "Daniel Preil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DanielPreil/ascee/issues"
+  },
+  "homepage": "https://github.com/DanielPreil/ascee#readme",
+  "dependencies": {
+    "three": "^0.155.0"
+  }
+}
