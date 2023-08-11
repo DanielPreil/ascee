@@ -19,8 +19,32 @@ body {
   justify-content: center;
 }
 
+.contentWrapper {
+  position: relative;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+}
+
 .myCanvas {
-  width: 90vw;
-  height: 90vh;
-  border: 1px solid red;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  opacity: 0%;
+  z-index: 5;
+}
+
+.myImage {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  pointer-events: none;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: rgb(0, 0, 0);
 }

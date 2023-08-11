@@ -25,43 +25,69 @@ const asceeCreateCanvas = (canvasElement, transparent=false, cameraFov=75, camer
 }
 
 // Create The asceeModel With The parameters which User Passes or use The Defaults
-// Parameters: modelElement: String, renderer: THREE.WebGLRenderer scene: THREE.Scene, camera: THREE.PerspectiveCamera
-const asceeCreateModel = (modelElement, renderer, scene, camera) => {
+// Parameters: scene: THREE.Scene, modelElement: String, modelXPosition: Number, modelYPosition: Number
+const asceeCreateModel = (scene, modelElement, modelXPosition=0, modelYPosition=0) => {
 
-  // Create The Model variable + add it to the scene
-  const model = new THREE.Group();
-  scene.add(model);
+  // Create The asceeModel variable + add it to the scene
+  const asceeModel = new THREE.Group();
+  scene.add(asceeModel);
   
-  // Load User's (Gltf / Glb) Model + add it to the model variable (That is already passed to the scene)
+  // Load User's (Gltf / Glb) Model + add it to the asceeModel variable (That is already passed to the scene)
   const loader = new GLTFLoader();
   loader.load(modelElement, (gltf) => {
     const loadedModel = gltf.scene;
-    model.add(loadedModel);
+    asceeModel.add(loadedModel);
   });
-  
 
- // --- Uncommented Parts
+  // The Positionng of the Model
+  asceeModel.position.x = modelXPosition;
+  asceeModel.position.y = modelYPosition;
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.update();
+  // Return the asceeModel Variable To The User to use it later in the asceeCreateRender function
+  return asceeModel
+}
 
-  model.rotation.x += 0.5;
+// asceeCreateRender function to render the Scene, Camera + The Custom Hand Made Animations on the asceeModel
+// Parameters: scene: THREE.Scene, renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, model: THREE.Group, controls: Boolean, controlsDumpingEnabled: Boolean, modelYShouldRotate: Boolean, modelYRotation: Number, modelXShouldRotate: Boolean, modelXRotation: Number
+const asceeCreateRender = (scene, renderer, camera, model, controls=true, controlsDumpingEnabled=true, modelYShouldRotate=true, modelYRotation=0.01, modelXShouldRotate=false, modelXRotation=0.01) => {
 
-  function animate() {
-    requestAnimationFrame(animate);
-
+  // If Controls True -> Use OrbitControls + enableDamping if it is True
+  // Else Do Nothing
+  if (controls) {
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = controlsDumpingEnabled;
     controls.update();
+  } else {
+    null
+  }
 
-    model.rotation.y += 0.01;
+  // animate function takes care of updating the AsceeModel Animation on the canvas based on the Parameters that is provided in the asceeCreateRender function
+  const animate = () => {
+    // requestAnimationFrame
+    requestAnimationFrame(animate);
+    // If Controls True -> Update it (Orbit Controls)
+    if (controls) {
+      controls.update();
+    }
+    // Parameter based AsceeModel Animation Controling on the X / Y Axises -> Rotation (Switched On / Off) + Speedness Of The Rotation
+    if (modelYShouldRotate && modelXShouldRotate === false) {
+      model.rotation.y += modelYRotation;
+    } else if (modelXShouldRotate && modelYShouldRotate === false) {
+      model.rotation.x += modelXRotation;
+    } else if (modelXShouldRotate === true && modelYShouldRotate === true) {
+      model.rotation.x += modelXRotation;
+      model.rotation.y += modelYRotation;
+    } else if (modelXShouldRotate === false && modelYShouldRotate === false) {
+      null
+    }
 
+    // Render The Scene, Camera at the end
     renderer.render(scene, camera);
   }
 
+  // Call The animate function again for the loop
   animate();
-
- // --- Uncommented Parts Over
-}
+} 
 
 // Create Light With The parameters which User Passes or use The Defaults
 // Parameters: asceeScene: THREE.Scene, lightStrength: Number, lightColor: Hexadecimal Number, lightPosition.x: Number, lightPosition.y: Number, lightPosition.z: Number
@@ -75,4 +101,4 @@ const asceeCreateLight = (scene, lightStrength=3, lightColor=0xffffff, lightPosi
 }
 
 // Export asceeCreateCanvas, asceeCreateModel, asceeCreateLight Functions
-export { asceeCreateCanvas, asceeCreateModel, asceeCreateLight };
+export { asceeCreateCanvas, asceeCreateModel, asceeCreateLight, asceeCreateRender };
