@@ -1,36 +1,61 @@
-import * as THREE from "./node_modules/three/build/three.module.js";
+import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 
-const asceeCreate = (canvasElement) => {
-  const scene = new THREE.Scene();
-  const renderer = new THREE.WebGLRenderer({ canvas: canvasElement });
+const asceeCreate = (canvasElement, modelElement) => {
   
+  const scene = new THREE.Scene();
+  const renderer = new THREE.WebGLRenderer({ canvas: canvasElement, alpha: true });
+  const model = new THREE.Group();
+  scene.add(model);
+
+  // Load the GLB model
+  const loader = new GLTFLoader();
+  loader.load(modelElement, (gltf) => {
+    const loadedModel = gltf.scene;
+    model.add(loadedModel);
+  });
+
   // Increase canvas size
   canvasElement.width = window.innerWidth;
   canvasElement.height = window.innerHeight;
+
+  const directionalLight1 = new THREE.DirectionalLight(0xffffff, 3);
+  directionalLight1.position.set(0, 1, 0);
+  scene.add(directionalLight1);
+
+  const directionalLight2 = new THREE.DirectionalLight(0xffffff, 3);
+  directionalLight2.position.set(0, 0, 1);
+  scene.add(directionalLight2);
+
+  const directionalLight3 = new THREE.DirectionalLight(0xffffff, 3);
+  directionalLight3.position.set(1, 0, 0);
+  scene.add(directionalLight3);
   
-  // Adjust pixel ratio
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(canvasElement.clientWidth, canvasElement.clientHeight);
+  
+  const camera = new THREE.PerspectiveCamera( 75, canvasElement.clientWidth / canvasElement.clientHeight, 0.1, 1000);
+  
+  camera.position.z = 2.5;
+  
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.update();
 
-
-  const camera = new THREE.PerspectiveCamera( 75, canvasElement.clientWidth / canvasElement.clientHeight, 0.1, 1000 );
-  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-  const cube = new THREE.Mesh( geometry, material );
-  scene.add( cube );
-
-  camera.position.z = 5;
+  model.rotation.x += 0.5;
 
   function animate() {
-    requestAnimationFrame( animate );
+    requestAnimationFrame(animate);
 
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    controls.update();
 
-    renderer.render( scene, camera );
+    model.rotation.y += 0.01;
+
+    renderer.render(scene, camera);
   }
 
   animate();
 }
 
-export default asceeCreate
+export default asceeCreate;
