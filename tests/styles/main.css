@@ -47,4 +47,8 @@ body {
   height: 100%;
   z-index: 10;
   background-color: rgb(0, 0, 0);
-}
+  /* Converting Model to Grayscale */
+  -webkit-filter: grayscale(1);
+  filter: gray;
+  filter: grayscale(1);
+ }
