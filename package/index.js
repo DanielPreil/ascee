@@ -47,17 +47,50 @@ const asceeCreateModel = (scene, modelElement, modelXPosition=0, modelYPosition=
   return asceeModel
 }
 
+
+const base64ToAscii = (base64, myImage) => {
+
+  const asciiCanvas = document.createElement("canvas");
+  const ctx = asciiCanvas.getContext("2d");
+  const asciiArt = document.querySelector(".asciiArt");
+  
+  myImage.src = base64;
+  
+  asciiCanvas.width = window.innerWidth / 7.7
+  asciiCanvas.height = window.innerHeight / 15
+
+  myImage.onload = () => {
+    ctx.drawImage(myImage, 0, 0, asciiCanvas.width, asciiCanvas.height);
+    const imageData = ctx.getImageData(0, 0, asciiCanvas.width, asciiCanvas.height).data;
+    let asciiResult = "";
+    for (let i = 0; i < imageData.length; i += 4) {
+      const r = imageData[i];
+      const g = imageData[i + 1];
+      const b = imageData[i + 2];
+      const brightness = (r + g + b) / 3;
+      /* Custom Ascii Art Symbols */
+      const asciiChar = [" ", ":", "?", "%", "+", "*", "8", "O", "o", "!", "I", ";", ",", " "][Math.floor(brightness / 20)];
+      asciiResult += asciiChar;
+      if ((i / 4 + 1) % asciiCanvas.width === 0) {
+        asciiResult += "\n";
+      }
+    }
+    asciiArt.textContent = asciiResult
+  }
+};
+
+
 // createSnapshot Function takes care of updating the myImage's src attribute
 // based on the base64code of the three.js canvas element's renderer
 const createSnapshot = (myImage, renderer) => {
   const snapshotBase64 = renderer.domElement.toDataURL("image/png").split(";base64,")[1];
-  myImage.src = `data:image/png;base64,${snapshotBase64}`;
-  renderer.clear()
+  const newBase64ImageSource = `data:image/png;base64,${snapshotBase64}`;
+  base64ToAscii(newBase64ImageSource, myImage);
 }
 
 // asceeCreateRender function to render the Scene, Camera + The Custom Hand Made Animations on the asceeModel
-// Parameters: scene: THREE.Scene, renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, model: THREE.Group, controls: Boolean, controlsDumpingEnabled: Boolean, modelYShouldRotate: Boolean, modelYRotation: Number, modelXShouldRotate: Boolean, modelXRotation: Number
-const asceeCreateRender = (scene, renderer, camera, model, controls=true, controlsDumpingEnabled=true, modelYShouldRotate=true, modelYRotation=0.01, modelXShouldRotate=false, modelXRotation=0.01, myImage) => {
+// Parameters: scene: THREE.Scene, renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, model: THREE.Group, controls: Boolean, controlsDumpingEnabled: Boolean, modelYShouldRotate: Boolean, modelYRotation: Number, modelXShouldRotate: Boolean, modelXRotation: Number, myImage: String
+const asceeCreateRender = (scene, renderer, camera, model, controls=true, controlsDumpingEnabled=true, modelYShouldRotate=true, modelYRotation=0.01, modelXShouldRotate=false, modelXRotation=0.01, myImage, parentContainer) => {
   
   // If Controls True -> Use OrbitControls + enableDamping if it is True
   // Else Do Nothing
