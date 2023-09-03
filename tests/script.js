@@ -5,8 +5,8 @@ window.addEventListener("DOMContentLoaded", () => {
   // Grab The Model, Canvas, Image
   const modelElement = "./models/room.glb"
   const canvasElement = document.querySelector(".myCanvas")
-  const myImage = document.querySelector(".myImage")
-  const asciiCanvas = document.querySelector(".asciiCanvas")
+  const imageElement = document.querySelector(".myImage")
+  const asciiElement = document.querySelector(".myAscii")
   // Create The asceeCanvas With The parameters or use The Defaults
   // Parameters: CanvasElement: String, TransparentBackground: Boolean, Camera Aspect Ratio: Number, Camera Near: Number, Camera Far: Number,  Camera Z Axis: Number
   const asceeCanvas = asceeCreateCanvas(canvasElement, true, 75, canvasElement.clientWidth / canvasElement.clientHeight, 0.1, 1000, 2.5)
@@ -24,6 +24,6 @@ window.addEventListener("DOMContentLoaded", () => {
   asceeCreateLight(asceeScene, 3, 0xffffff, { x: 0, y: 1, z: 0 })
   asceeCreateLight(asceeScene, 3, 0xffffff, { x: 1, y: 0, z: 0 })
   // asceeCreateRender function to render the Scene, Camera + The Custom Hand Made Animations on the asceeModel
-  // Parameters: asceeScene: THREE.Scene, asceeRenderer: THREE.WebGLRenderer, asceeCamera: THREE.PerspectiveCamera, asceeModel: THREE.Group, controls: Boolean, controlsDumpingEnabled: Boolean, modelYShouldRotate: Boolean, modelYRotation: Number, modelXShouldRotate: Boolean, modelXRotation: Number, myImage: String
-  asceeCreateRender(asceeScene, asceeRenderer, asceeCamera, asceeModel, true, true, true, 0.01, false, 0, myImage, asciiCanvas)
+  // Parameters: asceeScene: THREE.Scene, asceeRenderer: THREE.WebGLRenderer, asceeCamera: THREE.PerspectiveCamera, asceeModel: THREE.Group, controls: Boolean, controlsDumpingEnabled: Boolean, modelYShouldRotate: Boolean, modelYRotation: Number, modelXShouldRotate: Boolean, modelXRotation: Number, imageElement: img Tag Element, asciiElement: pre Tag Element
+  asceeCreateRender(asceeScene, asceeRenderer, asceeCamera, asceeModel, true, true, true, 0.01, false, 0, imageElement, asciiElement)
 })

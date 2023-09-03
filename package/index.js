@@ -47,18 +47,17 @@ const asceeCreateModel = (scene, modelElement, modelXPosition=0, modelYPosition=
   return asceeModel
 }
 
-
-const base64ToAscii = (base64, myImage) => {
-
+// base64ToAscii function takes care of creating the Ascii Effect of the symbols and updating it on the myAscii textContent (pre Tag)
+const base64ToAscii = (base64, myImage, myAscii) => {
+  // Create a new AsciiCanvas (get 2d context as ctx), also pull the pre tag (Ascii Art)
   const asciiCanvas = document.createElement("canvas");
   const ctx = asciiCanvas.getContext("2d");
-  const asciiArt = document.querySelector(".asciiArt");
-  
+  // Set myImage's src to Base64 code
   myImage.src = base64;
-  
+  // Responsiveness, Also Image Centralization
   asciiCanvas.width = window.innerWidth / 7.7
   asciiCanvas.height = window.innerHeight / 15
-
+  // if myImage Loads up, then calculate the positions of the custom symbols, update them
   myImage.onload = () => {
     ctx.drawImage(myImage, 0, 0, asciiCanvas.width, asciiCanvas.height);
     const imageData = ctx.getImageData(0, 0, asciiCanvas.width, asciiCanvas.height).data;
@@ -75,22 +74,22 @@ const base64ToAscii = (base64, myImage) => {
         asciiResult += "\n";
       }
     }
-    asciiArt.textContent = asciiResult
+    // Render the Ascii Symbols in the myAscii Pre Tag
+    myAscii.textContent = asciiResult
   }
-};
-
+}
 
 // createSnapshot Function takes care of updating the myImage's src attribute
 // based on the base64code of the three.js canvas element's renderer
-const createSnapshot = (myImage, renderer) => {
+const createSnapshot = (myImage, renderer, myAscii) => {
   const snapshotBase64 = renderer.domElement.toDataURL("image/png").split(";base64,")[1];
   const newBase64ImageSource = `data:image/png;base64,${snapshotBase64}`;
-  base64ToAscii(newBase64ImageSource, myImage);
+  base64ToAscii(newBase64ImageSource, myImage, myAscii);
 }
 
 // asceeCreateRender function to render the Scene, Camera + The Custom Hand Made Animations on the asceeModel
-// Parameters: scene: THREE.Scene, renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, model: THREE.Group, controls: Boolean, controlsDumpingEnabled: Boolean, modelYShouldRotate: Boolean, modelYRotation: Number, modelXShouldRotate: Boolean, modelXRotation: Number, myImage: String
-const asceeCreateRender = (scene, renderer, camera, model, controls=true, controlsDumpingEnabled=true, modelYShouldRotate=true, modelYRotation=0.01, modelXShouldRotate=false, modelXRotation=0.01, myImage, parentContainer) => {
+// Parameters: scene: THREE.Scene, renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, model: THREE.Group, controls: Boolean, controlsDumpingEnabled: Boolean, modelYShouldRotate: Boolean, modelYRotation: Number, modelXShouldRotate: Boolean, modelXRotation: Number, imageElement: img Tag Element, asciiElement: pre Tag Element
+const asceeCreateRender = (scene, renderer, camera, model, controls=true, controlsDumpingEnabled=true, modelYShouldRotate=true, modelYRotation=0.01, modelXShouldRotate=false, modelXRotation=0.01, myImage, myAscii) => {
   
   // If Controls True -> Use OrbitControls + enableDamping if it is True
   // Else Do Nothing
@@ -112,7 +111,7 @@ const asceeCreateRender = (scene, renderer, camera, model, controls=true, contro
 
     // Capture snapshot One by One
     if (!snapshotTaken) {
-      createSnapshot(myImage, renderer);
+      createSnapshot(myImage, renderer, myAscii);
       snapshotTaken = true;
     } else {
       snapshotTaken = false;
